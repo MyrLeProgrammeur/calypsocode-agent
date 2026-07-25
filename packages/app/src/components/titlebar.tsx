@@ -28,7 +28,6 @@ import { tabKey, useTabs } from "@/context/tabs"
 import type { PromptSession } from "@/context/prompt"
 import "./titlebar.css"
 import { newTabTooltipKeybind } from "./command-tooltip-keybind"
-import { normalizeSessionInfo } from "@/utils/session"
 
 type TauriDesktopWindow = {
   startDragging?: () => Promise<void>
@@ -268,9 +267,9 @@ export function Titlebar(props: { update?: TitlebarUpdate; debugTools?: { visibl
                 return conn ? { route, sdk: global.ensureServerCtx(conn).sdk } : undefined
               },
               ({ route, sdk }) =>
-                sdk.api.session
+                sdk.client.session
                   .get({ sessionID: route.sessionId })
-                  .then(normalizeSessionInfo)
+                  .then((x) => x.data)
                   .catch(() => {}),
             )
 
@@ -420,7 +419,16 @@ export function Titlebar(props: { update?: TitlebarUpdate; debugTools?: { visibl
                   title: "",
                   keybind: `mod+option+ArrowLeft,ctrl+shift+tab`,
                   hidden: true,
-                  onSelect: tabs.previous,
+                  onSelect: () => {
+                    let index = tabsStore.findIndex((tab) => tab === currentTab())
+                    if (index === -1) return
+
+                    index -= 1
+                    if (index === -1) index = tabsStore.length - 1
+
+                    const next = tabsStore[index]
+                    if (next) tabs.select(next)
+                  },
                 },
                 {
                   id: `tab.next`,
@@ -428,7 +436,16 @@ export function Titlebar(props: { update?: TitlebarUpdate; debugTools?: { visibl
                   title: "",
                   keybind: `mod+option+ArrowRight,ctrl+tab`,
                   hidden: true,
-                  onSelect: tabs.next,
+                  onSelect: () => {
+                    let index = tabsStore.findIndex((tab) => tab === currentTab())
+                    if (index === -1) return
+
+                    index += 1
+                    if (index === tabsStore.length) index = 0
+
+                    const next = tabsStore[index]
+                    if (next) tabs.select(next)
+                  },
                 },
               ].filter((v) => v !== undefined)
             })
@@ -590,7 +607,6 @@ export function Titlebar(props: { update?: TitlebarUpdate; debugTools?: { visibl
                           placement="bottom"
                           title={language.t("command.session.new")}
                           keybind={command.keybind("session.new")}
-                          openDelay={800}
                         >
                           <Button
                             variant="ghost"
@@ -620,7 +636,7 @@ export function Titlebar(props: { update?: TitlebarUpdate; debugTools?: { visibl
                   >
                     <Show when={hasProjects() && nav()}>
                       <div class="flex items-center gap-0 transition-transform">
-                        <Tooltip placement="bottom" value={language.t("common.goBack")} openDelay={800}>
+                        <Tooltip placement="bottom" value={language.t("common.goBack")}>
                           <Button
                             variant="ghost"
                             icon="chevron-left"
@@ -630,7 +646,7 @@ export function Titlebar(props: { update?: TitlebarUpdate; debugTools?: { visibl
                             aria-label={language.t("common.goBack")}
                           />
                         </Tooltip>
-                        <Tooltip placement="bottom" value={language.t("common.goForward")} openDelay={800}>
+                        <Tooltip placement="bottom" value={language.t("common.goForward")}>
                           <Button
                             variant="ghost"
                             icon="chevron-right"
