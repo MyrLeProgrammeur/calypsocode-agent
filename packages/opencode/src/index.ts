@@ -29,8 +29,14 @@ import { DbCommand } from "./cli/cmd/db"
 import { errorMessage } from "./util/error"
 import { PluginCommand } from "./cli/cmd/plug"
 import { Heap } from "./cli/heap"
+import { printAbout } from "./cli/about"
 
 const args = hideBin(process.argv)
+
+if (args.includes("--about")) {
+  printAbout()
+  process.exit(0)
+}
 
 function show(out: string) {
   const text = out.trimStart()
@@ -61,6 +67,10 @@ const cli = yargs(args)
   })
   .option("pure", {
     describe: "run without external plugins",
+    type: "boolean",
+  })
+  .option("about", {
+    describe: "show CalypsoCode's provenance and licenses (fork of OpenCode: MIT + AGPL-3.0)",
     type: "boolean",
   })
   .middleware(async (opts) => {

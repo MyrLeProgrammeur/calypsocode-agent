@@ -1,6 +1,7 @@
 import { Prompt, type PromptRef } from "../component/prompt"
 import { createEffect, createMemo, createSignal, onMount } from "solid-js"
 import { Logo } from "../component/logo"
+import { useTheme } from "../context/theme"
 import { useSync } from "../context/sync"
 import { Toast } from "../ui/toast"
 import { useArgs } from "../context/args"
@@ -21,6 +22,7 @@ const placeholder = {
 
 export function Home() {
   const pluginRuntime = usePluginRuntime()
+  const { theme } = useTheme()
   const sync = useSync()
   const route = useRouteData("home")
   const promptRef = usePromptRef()
@@ -76,6 +78,9 @@ export function Home() {
           <pluginRuntime.Slot name="home_logo" mode="replace">
             <Logo />
           </pluginRuntime.Slot>
+        </box>
+        <box flexShrink={0}>
+          <text fg={theme.textMuted}>Fork of OpenCode (MIT) · --about for licenses</text>
         </box>
         <box height={1} minHeight={0} flexShrink={1} />
         <box width="100%" maxWidth={promptMaxWidth()} zIndex={1000} paddingTop={1} flexShrink={0}>

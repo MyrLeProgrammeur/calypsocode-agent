@@ -24,6 +24,8 @@ import type { RunSplashTheme } from "./theme"
 export const SPLASH_TITLE_LIMIT = 50
 export const SPLASH_TITLE_FALLBACK = "Untitled session"
 
+const DISCLOSURE = "Fork of OpenCode (MIT) — see --about for both licenses"
+
 type SplashInput = {
   title: string | undefined
   session_id: string
@@ -205,6 +207,15 @@ function build(input: SplashWriterInput, kind: "entry" | "exit", ctx: Scrollback
         undefined,
       )
     }
+    push(
+      lines,
+      body_left,
+      top + mark.length - 1,
+      Locale.truncateMiddle(DISCLOSURE, Math.max(1, width - body_left)),
+      left,
+      undefined,
+      TextAttributes.DIM,
+    )
     height = top + mark.length
   }
 
