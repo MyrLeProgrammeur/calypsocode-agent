@@ -102,32 +102,32 @@
       "light": "lightStep6"
     },
     "diffAdded": {
-      "dark": "#4fd6be",
-      "light": "#1e725c"
+      "dark": "darkGreen",
+      "light": "lightGreen"
     },
     "diffRemoved": {
-      "dark": "#c53b53",
-      "light": "#c53b53"
+      "dark": "darkRed",
+      "light": "lightRed"
     },
     "diffContext": {
-      "dark": "#828bb8",
-      "light": "#7086b5"
+      "dark": "darkStep11",
+      "light": "lightStep11"
     },
     "diffHunkHeader": {
-      "dark": "#828bb8",
-      "light": "#7086b5"
+      "dark": "darkStep10",
+      "light": "lightStep10"
     },
     "diffHighlightAdded": {
-      "dark": "#b8db87",
-      "light": "#4db380"
+      "dark": "#b8f5d4",
+      "light": "#237750"
     },
     "diffHighlightRemoved": {
       "dark": "#e26a75",
       "light": "#f52a65"
     },
     "diffAddedBg": {
-      "dark": "#20303b",
-      "light": "#d5e5d5"
+      "dark": "#142a22",
+      "light": "#eaf5f0"
     },
     "diffRemovedBg": {
       "dark": "#37222c",
@@ -138,12 +138,12 @@
       "light": "lightStep2"
     },
     "diffLineNumber": {
-      "dark": "#8f8f8f",
-      "light": "#595959"
+      "dark": "darkStep8",
+      "light": "lightStep8"
     },
     "diffAddedLineNumberBg": {
-      "dark": "#1b2b34",
-      "light": "#c5d5c5"
+      "dark": "#17352a",
+      "light": "#d5e9e0"
     },
     "diffRemovedLineNumberBg": {
       "dark": "#2d1f26",
