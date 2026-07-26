@@ -3,21 +3,18 @@ import { For, type JSX, createSignal, onCleanup, onMount } from "solid-js"
 import { tint, useTheme } from "../context/theme"
 import { logo } from "../logo"
 
-// Entrance: rows materialize top-to-bottom out of the background. Ambient:
-// once revealed, the bold ("Code") half pulses between the brand's violet
-// and pink — punchy and continuous, no blue in the mix.
+// Entrance: rows materialize top-to-bottom out of the background. Ambient: once
+// revealed, the bold ("Code") half carries the brand ramp — primary on its first
+// column, accent on its last, the same gradient the exported logo draws — and the
+// whole ramp breathes along that axis. No blue in the mix.
 const REVEAL_MS = 620
 const SHIMMER_PERIOD_MS = 2400
 const TICK_MS = 50
-const SHIMMER_MIX = 0.62
+const SHIMMER_MIX = 0.25
 
-const SHIMMER_VIOLET = RGBA.fromHex("#8b4cff")
-const SHIMMER_PINK = RGBA.fromHex("#ff2e97")
-
-function shimmerColor(phase: number): RGBA {
+function bounce(phase: number): number {
   const t = ((phase % 1) + 1) % 1
-  const bounce = t < 0.5 ? t * 2 : (1 - t) * 2
-  return tint(SHIMMER_VIOLET, SHIMMER_PINK, bounce)
+  return t < 0.5 ? t * 2 : (1 - t) * 2
 }
 
 export function Logo() {
@@ -38,64 +35,54 @@ export function Logo() {
     return Math.max(0, Math.min(1, (t - rowIndex * span) / span))
   }
 
-  const liveColor = (fg: RGBA, rowIndex: number, shimmering: boolean) => {
+  const gradient = (col: number, width: number) =>
+    tint(theme.primary, theme.accent, width > 1 ? col / (width - 1) : 0)
+
+  const liveColor = (fg: RGBA, rowIndex: number, shimmering: boolean, col: number, width: number) => {
+    let target = fg
+    if (shimmering) {
+      const pulse = tint(theme.primary, theme.accent, bounce(elapsed() / SHIMMER_PERIOD_MS))
+      target = tint(gradient(col, width), pulse, SHIMMER_MIX)
+    }
     const revealed = rowReveal(rowIndex)
-    if (revealed < 1) return tint(theme.background, fg, revealed)
-    if (!shimmering) return fg
-    return tint(fg, shimmerColor(elapsed() / SHIMMER_PERIOD_MS), SHIMMER_MIX)
+    return revealed < 1 ? tint(theme.background, target, revealed) : target
   }
 
   const renderLine = (line: string, fg: RGBA, bold: boolean, rowIndex: number, shimmering: boolean): JSX.Element[] => {
     const attrs = bold ? TextAttributes.BOLD : undefined
-    return Array.from(line).map((char) => {
+    const chars = Array.from(line)
+    return chars.map((char, col) => {
+      const color = () => liveColor(fg, rowIndex, shimmering, col, chars.length)
       if (char === "_") {
         return (
-          <text
-            fg={liveColor(fg, rowIndex, shimmering)}
-            bg={tint(theme.background, liveColor(fg, rowIndex, shimmering), 0.25)}
-            attributes={attrs}
-            selectable={false}
-          >
+          <text fg={color()} bg={tint(theme.background, color(), 0.25)} attributes={attrs} selectable={false}>
             {" "}
           </text>
         )
       }
       if (char === "^") {
         return (
-          <text
-            fg={liveColor(fg, rowIndex, shimmering)}
-            bg={tint(theme.background, liveColor(fg, rowIndex, shimmering), 0.25)}
-            attributes={attrs}
-            selectable={false}
-          >
+          <text fg={color()} bg={tint(theme.background, color(), 0.25)} attributes={attrs} selectable={false}>
             ▀
           </text>
         )
       }
       if (char === "~") {
         return (
-          <text
-            fg={tint(theme.background, liveColor(fg, rowIndex, shimmering), 0.25)}
-            attributes={attrs}
-            selectable={false}
-          >
+          <text fg={tint(theme.background, color(), 0.25)} attributes={attrs} selectable={false}>
             ▀
           </text>
         )
       }
       if (char === ",") {
         return (
-          <text
-            fg={tint(theme.background, liveColor(fg, rowIndex, shimmering), 0.25)}
-            attributes={attrs}
-            selectable={false}
-          >
+          <text fg={tint(theme.background, color(), 0.25)} attributes={attrs} selectable={false}>
             ▄
           </text>
         )
       }
       return (
-        <text fg={liveColor(fg, rowIndex, shimmering)} attributes={attrs} selectable={false}>
+        <text fg={color()} attributes={attrs} selectable={false}>
           {char}
         </text>
       )
