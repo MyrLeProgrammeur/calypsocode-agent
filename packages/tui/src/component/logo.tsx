@@ -4,22 +4,20 @@ import { tint, useTheme } from "../context/theme"
 import { logo } from "../logo"
 
 // Entrance: rows materialize top-to-bottom out of the background. Ambient:
-// once revealed, the bold ("Code") half slowly cycles through the brand's
-// violet/blue/pink accents — a subtle, continuous highlight, not a hard flash.
+// once revealed, the bold ("Code") half pulses between the brand's violet
+// and pink — punchy and continuous, no blue in the mix.
 const REVEAL_MS = 620
-const SHIMMER_PERIOD_MS = 3800
+const SHIMMER_PERIOD_MS = 2400
 const TICK_MS = 50
-const SHIMMER_MIX = 0.35
+const SHIMMER_MIX = 0.62
 
-const SHIMMER_VIOLET = RGBA.fromHex("#7c5cff")
-const SHIMMER_BLUE = RGBA.fromHex("#4c8dff")
-const SHIMMER_PINK = RGBA.fromHex("#ff5c9d")
+const SHIMMER_VIOLET = RGBA.fromHex("#8b4cff")
+const SHIMMER_PINK = RGBA.fromHex("#ff2e97")
 
 function shimmerColor(phase: number): RGBA {
-  const t = (((phase % 1) + 1) % 1) * 3
-  if (t < 1) return tint(SHIMMER_VIOLET, SHIMMER_BLUE, t)
-  if (t < 2) return tint(SHIMMER_BLUE, SHIMMER_PINK, t - 1)
-  return tint(SHIMMER_PINK, SHIMMER_VIOLET, t - 2)
+  const t = ((phase % 1) + 1) % 1
+  const bounce = t < 0.5 ? t * 2 : (1 - t) * 2
+  return tint(SHIMMER_VIOLET, SHIMMER_PINK, bounce)
 }
 
 export function Logo() {
