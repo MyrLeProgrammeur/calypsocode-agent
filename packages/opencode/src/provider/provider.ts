@@ -456,44 +456,22 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
     llmgateway: () =>
       Effect.succeed({
         autoload: false,
-        options: {
-          headers: {
-            "HTTP-Referer": "https://opencode.ai/",
-            "X-Title": "opencode",
-            "X-Source": "opencode",
-          },
-        },
+        options: {},
       }),
     openrouter: () =>
       Effect.succeed({
         autoload: false,
-        options: {
-          headers: {
-            "HTTP-Referer": "https://opencode.ai/",
-            "X-Title": "opencode",
-          },
-        },
+        options: {},
       }),
     nvidia: (provider) =>
       Effect.succeed({
         autoload: provider.source === "config",
-        options: {
-          headers: {
-            "HTTP-Referer": "https://opencode.ai/",
-            "X-Title": "opencode",
-            "X-BILLING-INVOKE-ORIGIN": "OpenCode",
-          },
-        },
+        options: {},
       }),
     vercel: () =>
       Effect.succeed({
         autoload: false,
-        options: {
-          headers: {
-            "http-referer": "https://opencode.ai/",
-            "x-title": "opencode",
-          },
-        },
+        options: {},
       }),
     "google-vertex": Effect.fnUntraced(function* (provider: Info) {
       const env = yield* dep.env()
